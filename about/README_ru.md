@@ -1,5 +1,5 @@
 
-# Docker Simple Authentication Server
+# Простой докер-сервер аутентификации
 
 Этот репозиторий предоставляет сервер аутентификации, предназначенный для управления аутентификацией пользователей и сессиями в контейнерной среде с использованием Docker и Nginx.
 
@@ -57,7 +57,7 @@
 
    # Язык по умолчанию (en/ru/fr/de/es/it/zh)
    # Специальные языки: "redneck_us, irish_gang, imperial_ru, soviet_ru"
-   APP_LANGUAGE=en
+   APP_LANGUAGE=ru
 
    # Тема оформления (light/dark/imperial/soviet/cyberpunk/glass)
    STYLE_THEME=light
