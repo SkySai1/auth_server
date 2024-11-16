@@ -65,7 +65,7 @@
 
 4. **Настройте Nginx**:
 
-   ```nginx
+```nginx
 server {
       server_name authtest.local;
 

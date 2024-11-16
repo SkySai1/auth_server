@@ -65,7 +65,7 @@ It’s runnin’ on Flask, with Gunicorn takin’ care o' the heavy liftin’.
 
 4. **Sort Out Nginx**:
 
-``nginx
+```nginx
 server {
       server_name authtest.local;
 

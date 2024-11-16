@@ -65,7 +65,7 @@ It runs on Flask, and that fancy Gunicorn thing helps balance the load so y’al
 
 4. **Hook Up Nginx**:
 
-``nginx
+```nginx
 server {
       server_name authtest.local;
 
