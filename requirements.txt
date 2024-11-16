@@ -1,0 +1,5 @@
+flask
+redis
+flask-session
+passlib
+gunicorn
