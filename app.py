@@ -32,7 +32,10 @@ def get_current_language():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    style_theme = os.getenv('STYLE_THEME', 'light')  # Значение по умолчанию — light
     style_folder = os.getenv('STYLE_FOLDER', '/dsas_static')
+    style_path = f"{style_folder}/styles/{style_theme}.css"
+
     lang = get_current_language()
     next_url = request.args.get('next', '/') 
     error_message = None
@@ -56,7 +59,7 @@ def login():
     return render_template(
         'login.html', 
         error_message=error_message, 
-        style_folder=style_folder,
+        style_path=style_path,
         lang=lang
     )
 

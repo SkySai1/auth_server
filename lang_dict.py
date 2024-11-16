@@ -7,12 +7,40 @@ LANGUAGES = {
         'login_button': 'Login',
         'error_message': 'Invalid username or password'
     },
+    'redneck_us': {
+        'title': 'Y’all, log on in!',
+        'username_placeholder': 'Whatcha go by?',
+        'password_placeholder': 'Secret pass',
+        'login_button': 'Git ‘er done!',
+        'error_message': 'Dang it, wrong name or pass. Try agin, buddy.'
+    },
+    'irish_gang': {
+        'title': 'Login, ya lad!',
+        'username_placeholder': 'What’s yer name, mate?',
+        'password_placeholder': 'Yer code, quick!',
+        'login_button': 'Get inside, quick!',
+        'error_message': 'Oi! Wrong name or code. Try it again, mate.'
+    },
     'ru': {
         'title': 'Вход в систему',
         'username_placeholder': 'Имя пользователя',
         'password_placeholder': 'Пароль',
         'login_button': 'Войти',
         'error_message': 'Неверные учетные данные. Пожалуйста, попробуйте снова.'
+    },
+    'imperial_ru': {
+        'title': 'Вход в систему',
+        'username_placeholder': 'Ваше имя',
+        'password_placeholder': 'Ваш пароль',
+        'login_button': 'Входить',
+        'error_message': 'Неверные данные для входа. Попробуйте вновь.'
+    },
+    'soviet_ru': {
+        'title': 'Вход в систему, товарищ!',
+        'username_placeholder': 'Товарищ, введите имя',
+        'password_placeholder': 'Пароль (секретный)',
+        'login_button': 'Войти в систему',
+        'error_message': 'Товарищ, неверные учетные данные! Попробуйте еще раз.'
     },
     'fr': {
         'title': 'Connexion au système',
