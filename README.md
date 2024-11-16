@@ -1,4 +1,4 @@
-# Authentication Server Project
+# Docker Simple Authentication Server
 
 Welcome to the Authentication Server! This repository provides a multilingual experience to cater to diverse users. Choose your preferred language below to view the documentation.
 
