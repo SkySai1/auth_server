@@ -1,0 +1,62 @@
+body {
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #d9a8a8; /* Более мягкий красный */
+    color: white;
+}
+
+form {
+    padding: 20px;
+    border: 2px solid #d1b06f; /* Цвет, напоминающий старую бумагу */
+    border-radius: 5px;
+    background-color: #f7e0e0; /* Мягкий фон формы */
+    width: 300px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #6b342b; /* Более мягкий коричнево-красный */
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #d1b06f;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff5f5; /* Мягкий розовый */
+    color: #6b342b;
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #6b342b; /* Теплый коричнево-красный */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+input[type="submit"]:hover {
+    background-color: #a84838; /* Темнее при наведении */
+}
+
+.error-message {
+    color: #8b0000; /* Темно-красный */
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
