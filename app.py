@@ -3,6 +3,7 @@ import os
 import redis
 import uuid
 import hashlib
+from lang_dict import get_language
 
 app = Flask(__name__, static_folder='static') 
 app.config["SESSION_TYPE"] = "redis"
@@ -25,11 +26,17 @@ def check_credentials(username, password):
                     return True
     return False
 
+def get_current_language():
+    lang_code = os.getenv('APP_LANGUAGE', 'en')
+    return get_language(lang_code)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     style_folder = os.getenv('STYLE_FOLDER', '/dsas_static')
+    lang = get_current_language()
     next_url = request.args.get('next', '/') 
     error_message = None
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -44,9 +51,14 @@ def login():
             response.set_cookie(app.config["SESSION_COOKIE_NAME"], session_id)
             return response
         else:
-            error_message = "Неверные учетные данные. Пожалуйста, попробуйте снова."
+            error_message = lang['error_message']
 
-    return render_template('login.html', error_message=error_message, style_folder=style_folder)
+    return render_template(
+        'login.html', 
+        error_message=error_message, 
+        style_folder=style_folder,
+        lang=lang
+    )
 
 @app.route('/check_token')
 def check_token():

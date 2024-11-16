@@ -9,9 +9,8 @@ services:
       - "5000:5000"
     volumes:
       - auth_server_data:/app/data
-    environment:
-      - FLASK_ENV=production
-      - STYLE_FOLDER=dsas_static
+    env_file: 
+      - dsas.env
   redis:
     image: "redis:latest"
     ports:

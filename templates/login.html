@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход в систему</title>
+    <title>{{ lang['title'] }}</title>
     <link rel="stylesheet" href="{{ style_folder }}/style.css">
 </head>
 <body>
     <form method="post">
-        <h2>Вход в систему</h2>
+        <h2>{{ lang['title'] }}</h2>
 
         {% if error_message %}
             <div class="error-message">{{ error_message }}</div>
         {% endif %}
 
-        <input type="text" name="username" placeholder="Имя пользователя" required>
-        <input type="password" name="password" placeholder="Пароль" required>
-        <input type="submit" value="Войти">
+        <input type="text" name="username" placeholder="{{ lang['username_placeholder'] }}" required>
+        <input type="password" name="password" placeholder="{{ lang['password_placeholder'] }}" required>
+        <input type="submit" value="{{ lang['login_button'] }}">
     </form>
 </body>
 </html>
