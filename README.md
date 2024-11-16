@@ -3,5 +3,4 @@
 This project supports multiple languages for documentation:
 
 - [English](about/EN.README.md)
-- [Русский](ru/README.md)
-- [Français](fr/README.md)
+- [Русский](about/RU.README.md)
