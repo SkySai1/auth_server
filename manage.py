@@ -1,11 +1,11 @@
 import hashlib
 import sys
 import os
+from lang_dict import get_language
 
 HTPASSWD_FILE = "data/.htpasswd"
 
 def load_users():
-    """Загружает пользователей из файла .htpasswd и возвращает словарь."""
     users = {}
     if os.path.exists(HTPASSWD_FILE):
         with open(HTPASSWD_FILE, "r") as f:
@@ -15,15 +15,13 @@ def load_users():
     return users
 
 def save_users(users):
-    """Сохраняет пользователей в файл .htpasswd."""
     with open(HTPASSWD_FILE, "w") as f:
         for username, data in users.items():
             f.write(f"{username}:{data['hashed_pw']}:{data['salt']}\n")
 
 def hash_password(password, salt=None):
-    """Хэширует пароль с использованием scrypt. Если соль не передана, генерируется новая."""
     if salt is None:
-        salt = os.urandom(16)  # Генерация случайной соли размером 16 байт
+        salt = os.urandom(16) 
     else:
         salt = bytes.fromhex(salt)
     hashed_pw = hashlib.scrypt(
@@ -33,53 +31,53 @@ def hash_password(password, salt=None):
         r=8,
         p=1
     )
-    return hashed_pw.hex(), salt.hex()  # Возвращаем хэш и соль в виде строки
+    return hashed_pw.hex(), salt.hex() 
 
-def add_user(username, password):
+def add_user(username, password, lang):
     users = load_users()
     if username in users:
-        print(f"Пользователь {username} уже существует.")
+        print(f"{lang['user_exists']} {username}")
     else:
         hashed_pw, salt = hash_password(password)
         users[username] = {"hashed_pw": hashed_pw, "salt": salt}
         save_users(users)
-        print(f"Пользователь {username} добавлен.")
+        print(f"{lang['user_added']} {username}")
 
-def delete_user(username):
+def delete_user(username, lang):
     users = load_users()
     if username in users:
         del users[username]
         save_users(users)
-        print(f"Пользователь {username} удален.")
+        print(f"{lang['user_deleted']} {username}")
     else:
-        print(f"Пользователь {username} не найден.")
+        print(f"{lang['user_not_found']} {username}")
 
-def update_user(username, password):
+def update_user(username, password, lang):
     users = load_users()
     if username in users:
         hashed_pw, salt = hash_password(password)
         users[username] = {"hashed_pw": hashed_pw, "salt": salt}
         save_users(users)
-        print(f"Пароль пользователя {username} обновлен.")
+        print(f"{lang['password_updated']} {username}")
     else:
-        print(f"Пользователь {username} не найден.")
+        print(f"{lang['user_not_found']} {username}")
 
-def list_users():
+def list_users(lang):
     users = load_users()
     if users:
-        print("Список пользователей:")
+        print(lang['user_list'])
         for username in users.keys():
             print(f"- {username}")
     else:
-        print("Список пользователей пуст.")
+        print(lang['no_users'])
 
 def main():
+    # Определяем текущий язык из переменной окружения
+    lang_code = os.getenv('APP_LANGUAGE', 'en')
+    lang = get_language(lang_code)
+
     if len(sys.argv) < 2:
-        print("Использование:")
-        print("  Добавить пользователя: python manage.py add <username> <password>")
-        print("  Удалить пользователя: python manage.py delete <username>")
-        print("  Обновить пароль: python manage.py update <username> <new_password>")
-        print("  Список пользователей: python manage.py list")
+        print(lang['usage'])
         sys.exit(1)
 
     command = sys.argv[1]
@@ -87,18 +85,18 @@ def main():
     if command == "add" and len(sys.argv) == 4:
         username = sys.argv[2]
         password = sys.argv[3]
-        add_user(username, password)
+        add_user(username, password, lang)
     elif command == "delete" and len(sys.argv) == 3:
         username = sys.argv[2]
-        delete_user(username)
+        delete_user(username, lang)
     elif command == "update" and len(sys.argv) == 4:
         username = sys.argv[2]
         password = sys.argv[3]
-        update_user(username, password)
+        update_user(username, password, lang)
     elif command == "list":
-        list_users()
+        list_users(lang)
     else:
-        print("Неверные аргументы.")
+        print(lang['invalid_args'])
         sys.exit(1)
 
 if __name__ == "__main__":
