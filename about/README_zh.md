@@ -65,48 +65,53 @@
 
 4. **配置 Nginx**:
 
-   ```nginx
-   server {
-       server_name authtest.local;
+```nginx
+server {
+      server_name authtest.local;
 
-       location @login {
-           return 302 /dsas_login?next=$request_uri;
-       }
+      location @login {
+        return 302 /dsas_login?next=$request_uri;
+      }
 
-       location / {
-           auth_request /dsas_auth;
-           error_page 401 500 = @login;
-           proxy_pass http://127.0.0.1:8080;
-       }
+      location / {
+        auth_request /dsas_auth;
+        error_page 401 500 = @login;
 
-       location /dsas_login {
-           proxy_pass http://127.0.0.1:5000/login;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-       }
+        ## 你的代码在这里 ##
+        proxy_pass http://127.0.0.1:8080; # <- 示例
+    }
 
-       location /dsas_static/ {
-           proxy_pass http://127.0.0.1:5000/static/;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-       }
+    # "dsas_login" 可以是任意名称，但必须与 @login 一致
+    location /dsas_login {
+        proxy_pass http://127.0.0.1:5000/login;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 
-       location = /dsas_auth {
-           internal;
-           proxy_pass http://127.0.0.1:5000/check_token;
-           proxy_set_header X-Original-URI $request_uri;
-           proxy_set_header Cookie $http_cookie;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-       }
-   }
-   ```
+    # dsas.env 中定义的静态内容位置
+    location /dsas_static/ {
+        proxy_pass http://127.0.0.1:5000/static/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # "dsas_auth" 必须与 auth_request 指令一致
+    location = /dsas_auth {
+        internal;
+        proxy_pass http://127.0.0.1:5000/check_token;
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header Cookie $http_cookie;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
 
 5. **_(可选)_ 更新 `/etc/hosts` 文件**:
 

@@ -83,16 +83,14 @@ server {
       }
 
       location / {
-
         auth_request /dsas_auth;
         error_page 401 500 = @login;
 
-        ## Your code past here ##
-        proxy_pass http://127.0.0.1:8080; # <- Examples
-        ## End of your code ##
+        ## Your code is here ##
+        proxy_pass http://127.0.0.1:8080; # <- Example
     }
 
-    #"dsas_login" maybe any, but the same with @login
+    # "dsas_login" can be named anything, but it must match @login
     location /dsas_login {
         proxy_pass http://127.0.0.1:5000/login;
         proxy_set_header Host $host;
@@ -101,7 +99,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    #"dsas_static" can be changed in dsas.env file
+    # Static content location defined in dsas.env
     location /dsas_static/ {
         proxy_pass http://127.0.0.1:5000/static/;
         proxy_set_header Host $host;
@@ -110,7 +108,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    #"dsas_auth" maybe any, but the same with auth_request in /
+    # "dsas_auth" must match the auth_request directive
     location = /dsas_auth {
         internal;
         proxy_pass http://127.0.0.1:5000/check_token;
@@ -121,8 +119,6 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-
-
 }
 ```
 
