@@ -65,48 +65,53 @@ Die Anwendung basiert auf dem Flask-Modul, und das Load-Balancing wird innerhalb
 
 4. **Nginx konfigurieren**:
 
-   ```nginx
-   server {
-       server_name authtest.local;
+```nginx
+server {
+      server_name authtest.local;
 
-       location @login {
-           return 302 /dsas_login?next=$request_uri;
-       }
+      location @login {
+        return 302 /dsas_login?next=$request_uri;
+      }
 
-       location / {
-           auth_request /dsas_auth;
-           error_page 401 500 = @login;
-           proxy_pass http://127.0.0.1:8080;
-       }
+      location / {
+        auth_request /dsas_auth;
+        error_page 401 500 = @login;
 
-       location /dsas_login {
-           proxy_pass http://127.0.0.1:5000/login;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-       }
+        ## Ihr Code ist hier ##
+        proxy_pass http://127.0.0.1:8080; # <- Beispiel
+    }
 
-       location /dsas_static/ {
-           proxy_pass http://127.0.0.1:5000/static/;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-       }
+    # "dsas_login" kann beliebig benannt werden, muss aber mit @login übereinstimmen
+    location /dsas_login {
+        proxy_pass http://127.0.0.1:5000/login;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 
-       location = /dsas_auth {
-           internal;
-           proxy_pass http://127.0.0.1:5000/check_token;
-           proxy_set_header X-Original-URI $request_uri;
-           proxy_set_header Cookie $http_cookie;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-       }
-   }
-   ```
+    # Der Ort für statische Inhalte wird in dsas.env definiert
+    location /dsas_static/ {
+        proxy_pass http://127.0.0.1:5000/static/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # "dsas_auth" muss mit der auth_request-Direktive übereinstimmen
+    location = /dsas_auth {
+        internal;
+        proxy_pass http://127.0.0.1:5000/check_token;
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header Cookie $http_cookie;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
 
 5. **_(optional)_ Aktualisieren Sie die Datei `/etc/hosts`**:
 
