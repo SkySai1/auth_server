@@ -3,12 +3,18 @@ import os
 import redis
 import uuid
 import hashlib
+from datetime import datetime, timedelta
 from lang_dict import get_language
 
 app = Flask(__name__, static_folder='static') 
 app.config["SESSION_TYPE"] = "redis"
 app.config["SESSION_REDIS"] = redis.StrictRedis(host="redis", port=6379, decode_responses=True)
 app.config["SESSION_COOKIE_NAME"] = "x-auth-token"
+
+# Настройки времени сессии
+SESSION_LIFETIME = int(os.getenv('SESSION_LIFETIME', 3600))  # 1h by default
+SESSION_EXTENSION = int(os.getenv('SESSION_EXTENSION', 600))  # 10m by default
+SESSION_MAX_LIFETIME = int(os.getenv('SESSION_MAX_LIFETIME', 86400))  # 24h by default
 
 HTPASSWD_FILE = "data/.htpasswd"
 
@@ -32,7 +38,7 @@ def get_current_language():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    style_theme = os.getenv('STYLE_THEME', 'light')  # Значение по умолчанию — light
+    style_theme = os.getenv('STYLE_THEME', 'light') 
     style_folder = os.getenv('STYLE_FOLDER', '/dsas_static')
     style_path = f"{style_folder}/styles/{style_theme}.css"
 
@@ -45,10 +51,11 @@ def login():
         password = request.form.get('password')
 
         if check_credentials(username, password):
-
             session_id = str(uuid.uuid4())
+            session_start_time = datetime.utcnow()
             redis_conn = app.config["SESSION_REDIS"]
-            redis_conn.set(session_id, username, ex=3600)
+            redis_conn.set(session_id, username, ex=SESSION_LIFETIME)
+            redis_conn.set(f"{session_id}_start", session_start_time.isoformat())
 
             response = make_response(redirect(next_url))
             response.set_cookie(app.config["SESSION_COOKIE_NAME"], session_id)
@@ -72,12 +79,23 @@ def check_token():
 
     redis_conn = app.config["SESSION_REDIS"]
     username = redis_conn.get(session_cookie)
+    session_start_time = redis_conn.get(f"{session_cookie}_start")
 
-    if username:
-        redis_conn.expire(session_cookie, 600) 
-        return jsonify({"status": "success", "username": username}), 200
-    else:
+    if not username or not session_start_time:
         return jsonify({"error": "Session not found or expired"}), 401
+
+    session_start_time = datetime.fromisoformat(session_start_time)
+    session_age = (datetime.utcnow() - session_start_time).total_seconds()
+
+    if session_age > SESSION_MAX_LIFETIME:
+        redis_conn.delete(session_cookie)
+        redis_conn.delete(f"{session_cookie}_start")
+        return jsonify({"error": "Session has exceeded its maximum lifetime"}), 401
+
+    redis_conn.expire(session_cookie, SESSION_EXTENSION)
+    redis_conn.expire(f"{session_cookie}_start", SESSION_EXTENSION)
+
+    return jsonify({"status": "success", "username": username}), 200
 
 
 if __name__ == '__main__':
